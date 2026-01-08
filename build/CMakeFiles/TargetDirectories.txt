@@ -1,0 +1,3 @@
+/home/drw/gomoku/build/CMakeFiles/main.dir
+/home/drw/gomoku/build/CMakeFiles/edit_cache.dir
+/home/drw/gomoku/build/CMakeFiles/rebuild_cache.dir

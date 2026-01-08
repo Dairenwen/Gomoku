@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 五子棋</title>
+  
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5A2B',    // 木色主色调
+            secondary: '#D2B48C',  // 浅木色
+            accent: '#CD853F',     // 突出色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .board-texture {
+        background-image: url('https://picsum.photos/id/129/1000/1000');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+      }
+      .input-focus {
+        @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+      }
+      .btn-hover {
+        transition: all 0.3s ease;
+      }
+      .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      .chess-piece {
+        transform: translate(-50%, -50%); /* 确保棋子中心对准交叉点 */
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans flex flex-col">
+  <!-- 导航栏 -->
+  <nav class="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
+              <i class="fa fa-gamepad text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-primary">五子棋</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
+          <a href="register.html" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">注册</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="flex-grow flex items-center justify-center p-4 py-12">
+    <div class="max-w-5xl w-full">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="md:flex">
+          <!-- 左侧：装饰区域（优化棋子大小和布局） -->
+          <div class="md:w-1/2 board-texture bg-secondary/90 p-8 md:p-12 flex items-center justify-center">
+            <div class="text-center">
+              <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white mb-6 drop-shadow-md">五子连珠</h2>
+              
+              <!-- 15x15棋盘网格（优化版） -->
+              <div class="relative w-64 h-64 mx-auto mb-8">
+                <div class="absolute inset-0 rounded-md border-4 border-white/80" style="
+                  background-image: 
+                    linear-gradient(to right, rgba(255,255,255,0.6) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.6) 1px, transparent 1px);
+                  background-size: calc(100% / 14) calc(100% / 14); /* 15线14格 */
+                ">
+                </div>
+                
+                <!-- 优化棋子大小（从w-10调整为w-6），保持精准定位 -->
+                <div class="absolute top-[30%] left-[30%] w-6 h-6 rounded-full bg-black shadow-md chess-piece"></div>
+                <div class="absolute top-[30%] left-[50%] w-6 h-6 rounded-full bg-white border border-gray-300 shadow-md chess-piece"></div>
+                <div class="absolute top-[50%] left-[30%] w-6 h-6 rounded-full bg-white border border-gray-300 shadow-md chess-piece"></div>
+                <div class="absolute top-[50%] left-[50%] w-6 h-6 rounded-full bg-black shadow-md chess-piece"></div>
+                <div class="absolute top-[70%] left-[70%] w-6 h-6 rounded-full bg-black shadow-md chess-piece"></div>
+                <!-- 新增两颗棋子丰富布局，保持比例协调 -->
+                <div class="absolute top-[70%] left-[30%] w-6 h-6 rounded-full bg-white border border-gray-300 shadow-md chess-piece"></div>
+                <div class="absolute top-[30%] left-[70%] w-6 h-6 rounded-full bg-black shadow-md chess-piece"></div>
+              </div>
+              
+              <b><p class="text-black/90 text-lg">登录后即可开始你的五子棋之旅，挑战全国玩家，提升棋艺水平！</p></b>
+            </div>
+          </div>
+          
+          <!-- 右侧：登录表单 -->
+          <div class="md:w-1/2 p-8 md:p-12">
+            <div class="max-w-md mx-auto">
+              <h2 class="text-2xl font-bold text-primary mb-6">账号登录</h2>
+              
+              <form id="login-form" class="space-y-5">
+                <!-- 用户名 -->
+                <div>
+                  <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fa fa-user text-gray-400"></i>
+                    </div>
+                    <input type="text" id="username" name="username" 
+                           class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg input-focus"
+                           placeholder="请输入用户名" required>
+                  </div>
+                  <p class="hidden text-sm text-red-500 mt-1" id="username-error">用户名不能为空</p>
+                </div>
+                
+                <!-- 密码 -->
+                <div>
+                  <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fa fa-lock text-gray-400"></i>
+                    </div>
+                    <input type="password" id="password" name="password" 
+                           class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg input-focus"
+                           placeholder="请输入密码" required>
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                      <i class="fa fa-eye-slash"></i>
+                    </button>
+                  </div>
+                  <p class="hidden text-sm text-red-500 mt-1" id="password-error">密码不能为空</p>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" 
+                           class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                      记住我
+                    </label>
+                  </div>
+                  <a href="#" class="text-sm text-primary hover:text-primary/80 transition-colors">
+                    忘记密码？
+                  </a>
+                </div>
+                
+                <div>
+                  <button type="submit" class="btn-hover w-full bg-primary text-white py-3 px-4 rounded-lg font-medium text-center">
+                    登录
+                  </button>
+                </div>
+                
+                <div class="relative">
+                  <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">或使用以下方式登录</span>
+                  </div>
+                </div>
+                
+                <!-- 第三方登录 -->
+                <div class="flex gap-4">
+                  <button type="button" class="flex-1 btn-hover flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    <i class="fa fa-qq text-blue-500"></i>
+                    <span>QQ登录</span>
+                  </button>
+                  <button type="button" class="flex-1 btn-hover flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    <i class="fa fa-weixin text-green-500"></i>
+                    <span>微信登录</span>
+                  </button>
+                </div>
+              </form>
+              
+              <p class="mt-8 text-center text-gray-600">
+                还没有账号？ <a href="./register.html" class="text-primary font-medium hover:text-primary/80 transition-colors">立即注册</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-primary text-white py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center text-amber-200 text-sm">
+        <p>© 2023 五子棋游戏 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 密码显示/隐藏切换
+    document.getElementById('toggle-password').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      }
+    });
+    
+    // 登录表单提交
+    $(document).ready(function() {
+      $('#login-form').submit(function(e) {
+        e.preventDefault();
+        
+        // 获取表单数据
+        const username = $('#username').val().trim();
+        const password = $('#password').val().trim();
+        const rememberMe = $('#remember-me').is(':checked');
+        
+        // 客户端验证
+        let isValid = true;
+        
+        if (!username) {
+          $('#username-error').removeClass('hidden');
+          $('#username').addClass('border-red-500');
+          isValid = false;
+        } else {
+          $('#username-error').addClass('hidden');
+          $('#username').removeClass('border-red-500');
+        }
+        
+        if (!password) {
+          $('#password-error').removeClass('hidden');
+          $('#password').addClass('border-red-500');
+          isValid = false;
+        } else {
+          $('#password-error').addClass('hidden');
+          $('#password').removeClass('border-red-500');
+        }
+        
+        // 验证通过发送请求
+        if (isValid) {
+          const loginInfo = {
+            username: username,
+            password: password,
+            rememberMe: rememberMe
+          };
+          
+          $.ajax({
+            type: "POST",
+            url: '/login',
+            data: JSON.stringify(loginInfo),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(res) {
+              if (res.result === true) {
+                if (res.token) {//登录成功后，将token存储到localStorage
+                  localStorage.setItem('userToken', res.token);
+                }
+                window.location.href = 'hall.html';
+              } else {
+                alert('登录失败：' + (res.reason || '用户名或密码错误'));
+              }
+            },
+            error: function(xhr) {
+              alert('登录失败：' + xhr.responseJSON?.reason || xhr.statusText || '网络错误');
+              console.error('登录错误：', xhr);
+            }
+          });
+        }
+      });
+      
+      // 输入时实时清除错误状态
+      $('#username, #password').on('input', function() {
+        $(this).removeClass('border-red-500');
+        $(`#${this.id}-error`).addClass('hidden');
+      });
+    });
+    
+    // 页面载入动画
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainContent = document.querySelector('main > div');
+      mainContent.style.opacity = '0';
+      mainContent.style.transform = 'translateY(20px)';
+      mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        mainContent.style.transform = 'translateY(0)';
+      }, 100);
+    });
+  </script>
+</body>
+</html>

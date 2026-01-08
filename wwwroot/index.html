@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五子棋 - 经典对弈游戏</title>
+  
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5A2B',    // 木色主色调
+            secondary: '#D2B48C',  // 浅木色
+            accent: '#CD853F',     // 突出色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .board-texture {
+        background-image: url('https://picsum.photos/id/129/1000/1000');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+      }
+      .piece-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+      }
+      .btn-hover {
+        transition: all 0.3s ease;
+      }
+      .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans">
+  <!-- 导航栏 -->
+  <nav class="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
+              <i class="fa fa-gamepad text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-primary">五子棋</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
+          <a href="login.html" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">登录 / 注册</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 英雄区域 -->
+  <section class="py-16 md:py-24 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 mb-10 md:mb-0">
+        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-primary leading-tight mb-4">
+          落子连五，<br>智者胜
+        </h1>
+        <p class="text-gray-600 text-lg mb-8 max-w-lg">
+          体验经典五子棋游戏的魅力，挑战好友，提升棋艺。简单规则，深奥策略，等你来战！
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="login.html" class="btn-hover bg-primary text-white px-6 py-3 rounded-lg font-medium text-center flex items-center justify-center gap-2">
+            <i class="fa fa-sign-in"></i> 开始游戏
+          </a>
+          <a href="login.html" class="btn-hover bg-white text-primary border border-primary px-6 py-3 rounded-lg font-medium text-center flex items-center justify-center gap-2">
+            <i class="fa fa-users"></i> 进入大厅
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2 relative">
+        <div class="w-full max-w-md mx-auto aspect-square rounded-lg border-8 border-primary board-texture bg-secondary/90 shadow-2xl relative">
+          <!-- 装饰性棋盘线条 -->
+          <div class="absolute inset-0" style="background-image: 
+            linear-gradient(to right, rgba(0,0,0,0.8) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.8) 1px, transparent 1px);
+            background-size: 20% 20%;">
+          </div>
+          
+          <!-- 装饰性棋子 -->
+          <div class="absolute top-1/4 left-1/4 w-10 h-10 rounded-full bg-black shadow-md piece-float"></div>
+          <div class="absolute top-1/2 left-1/3 w-10 h-10 rounded-full bg-white border border-gray-300 shadow-md piece-float" style="animation-delay: 1s;"></div>
+          <div class="absolute bottom-1/4 right-1/4 w-10 h-10 rounded-full bg-black shadow-md piece-float" style="animation-delay: 2s;"></div>
+          <div class="absolute top-1/3 right-1/3 w-10 h-10 rounded-full bg-white border border-gray-300 shadow-md piece-float" style="animation-delay: 3s;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 游戏特色 -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-primary mb-12">游戏特色</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-amber-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <i class="fa fa-users text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">在线对战</h3>
+          <p class="text-gray-600">
+            与全国各地的玩家在线对弈，挑战不同段位的对手，提升自己的棋艺水平。
+          </p>
+        </div>
+        
+        <div class="bg-amber-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <i class="fa fa-trophy text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">段位系统</h3>
+          <p class="text-gray-600">
+            完善的段位晋升系统，记录你的每一次胜利，见证你的成长历程。
+          </p>
+        </div>
+        
+        <div class="bg-amber-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <i class="fa fa-comments text-2xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">实时聊天</h3>
+          <p class="text-gray-600">
+            游戏过程中可以与对手实时交流，探讨棋路，结交棋友，共同进步。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 游戏规则简介 -->
+  <section class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-primary mb-12">游戏规则</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="md:flex">
+          <div class="md:w-1/2 board-texture bg-secondary/90 p-8 flex items-center">
+            <div class="w-full max-w-sm mx-auto aspect-square rounded-md border-4 border-primary relative overflow-hidden">
+              <!-- 15×15标准棋盘（15条横线+15条竖线） -->
+              <div class="absolute inset-0" style="
+                background-image: 
+                  linear-gradient(to right, rgba(0,0,0,0.8) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0,0,0,0.8) 1px, transparent 1px);
+                background-size: calc(100% / 14) calc(100% / 14); /* 15线=14个间隔 */
+                background-position: 0 0;
+                padding: 8px; /* 边缘留白，避免线条贴边框 */
+                box-sizing: border-box;
+              ">
+              </div>
+              
+              <!-- 五子连珠（横向，精准落在(5,8)-(9,8)交叉点） -->
+              <!-- 计算逻辑：第n个交叉点 = (n-1) * (100% / 14) -->
+              <div class="absolute 
+                          top-[calc(7*(100%/14))]  /* 第8行交叉点(索引7) */
+                          left-[calc(4*(100%/14))] /* 第5列交叉点(索引4) */
+                          w-5 h-5 rounded-full bg-black shadow-md transform -translate-x-1/2 -translate-y-1/2">
+              </div>
+              
+              <div class="absolute 
+                          top-[calc(7*(100%/14))]  /* 第8行 */
+                          left-[calc(5*(100%/14))] /* 第6列 */
+                          w-5 h-5 rounded-full bg-black shadow-md transform -translate-x-1/2 -translate-y-1/2">
+              </div>
+              
+              <div class="absolute 
+                          top-[calc(7*(100%/14))]  /* 第8行 */
+                          left-[calc(6*(100%/14))] /* 第7列 */
+                          w-5 h-5 rounded-full bg-black shadow-md transform -translate-x-1/2 -translate-y-1/2">
+              </div>
+              
+              <div class="absolute 
+                          top-[calc(7*(100%/14))]  /* 第8行 */
+                          left-[calc(7*(100%/14))] /* 第8列（中心点） */
+                          w-5 h-5 rounded-full bg-black shadow-md transform -translate-x-1/2 -translate-y-1/2">
+              </div>
+              
+              <div class="absolute 
+                          top-[calc(7*(100%/14))]  /* 第8行 */
+                          left-[calc(8*(100%/14))] /* 第9列 */
+                          w-5 h-5 rounded-full bg-black shadow-md transform -translate-x-1/2 -translate-y-1/2">
+              </div>
+            </div>
+          </div>
+          
+          <div class="md:w-1/2 p-8">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">五子连珠，谁与争锋</h3>
+            <ul class="space-y-4 text-gray-600">
+              <li class="flex items-start gap-3">
+                <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+                <span>黑白双方轮流在棋盘交叉点落子，黑棋先行</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+                <span>先在一条直线（横、竖、斜向）上连成五子者获胜</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+                <span>落子后不能移动或拿掉任何棋子，直至本局结束</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+                <span>可以选择创建房间邀请好友，或快速匹配随机对手</span>
+              </li>
+            </ul>
+            
+            <a href="login.html" class="mt-6 inline-block btn-hover bg-primary text-white px-6 py-3 rounded-lg font-medium">
+              立即开始 <i class="fa fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-primary text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0">
+          <div class="flex items-center justify-center md:justify-start">
+            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-2">
+              <i class="fa fa-gamepad text-primary"></i>
+            </div>
+            <span class="text-xl font-bold">五子棋</span>
+          </div>
+          <p class="mt-2 text-center md:text-left text-amber-100">体验经典对弈的乐趣</p>
+        </div>
+        
+        <div class="flex flex-col md:flex-row gap-8">
+          <div>
+            <h4 class="font-semibold mb-3 text-amber-100">快速链接</h4>
+            <ul class="space-y-2 text-center md:text-right">
+              <li><a href="index.html" class="hover:text-amber-200 transition-colors">首页</a></li>
+              <li><a href="login.html" class="hover:text-amber-200 transition-colors">登录/注册</a></li>
+              <li><a href="rules.html" class="hover:text-amber-200 transition-colors">游戏规则</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold mb-3 text-amber-100">支持</h4>
+            <ul class="space-y-2 text-center md:text-right">
+              <li><a href="help.html" class="hover:text-amber-200 transition-colors">帮助中心</a></li>
+              <li><a href="contact.html" class="hover:text-amber-200 transition-colors">联系我们</a></li>
+              <li><a href="privacy.html" class="hover:text-amber-200 transition-colors">隐私政策</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-8 pt-6 border-t border-amber-800 text-center text-amber-200 text-sm">
+        <p>© 2023 五子棋游戏 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 页面载入动画
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+      sections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        
+        setTimeout(() => {
+          section.style.opacity = '1';
+          section.style.transform = 'translateY(0)';
+        }, 100 + index * 200);
+      });
+    });
+  </script>
+</body>
+</html>

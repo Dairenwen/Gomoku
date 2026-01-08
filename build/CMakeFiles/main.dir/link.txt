@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/main.dir/main.cc.o -o main  /usr/lib/x86_64-linux-gnu/libmysqlclient.so /usr/lib/x86_64-linux-gnu/libboost_system.so.1.83.0 /usr/lib/x86_64-linux-gnu/libjsoncpp.so.1.9.5 

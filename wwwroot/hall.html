@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对战大厅</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B5A2B',    // 木色主色调
+                        secondary: '#D2B48C',  // 浅木色
+                        accent: '#CD853F',     // 突出色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类（与登录页保持一致） -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .board-texture {
+                background-image: url('https://picsum.photos/id/129/1000/1000');
+                background-size: cover;
+                background-position: center;
+                background-blend-mode: overlay;
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+            }
+            .btn-hover {
+                transition: all 0.3s ease;
+            }
+            .btn-hover:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .chess-piece {
+                transform: translate(-50%, -50%); /* 确保棋子中心对准交叉点 */
+            }
+        }
+    </style>
+
+    <style>
+        /* 棋盘样式（优化定位计算基准） */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            width: 100%;
+            max-width: 450px;
+            height: 0;
+            padding-bottom: 100%;
+            background-color: #D2B48C; /* 浅木色棋盘 */
+            position: relative;
+            border: 2px solid #8B5A2B; /* 木色边框 */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box; /* 关键：确保边框不影响内部尺寸计算 */
+        }
+
+        /* 棋盘线 - 精确对齐 */
+        .board::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(to right, rgba(58, 38, 24, 0.8) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(58, 38, 24, 0.8) 1px, transparent 1px);
+            background-size: calc(100% / 14) calc(100% / 14); /* 15个点需要14个间隔 */
+            background-position: 0 0;
+            pointer-events: none; /* 避免遮挡棋子点击 */
+        }
+
+        /* 棋子样式（优化大小与登录页保持比例） */
+        .piece {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .black {
+            background: radial-gradient(circle at 30% 30%, #555, #000);
+        }
+
+        .white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            border: 1px solid #aaa;
+        }
+
+        /* 棋子出现动画（保持中心点对齐） */
+        @keyframes appear {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .piece.appear {
+            animation: appear 0.5s ease-out forwards;
+        }
+
+        /* 棋子消失动画 */
+        .piece.disappear {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans text-gray-800 overflow-x-hidden">
+    <!-- 导航栏（与登录页保持一致） -->
+    <nav class="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
+                            <i class="fa fa-gamepad text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-primary">五子棋</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
+                    <a href="login.html" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <main class="flex-grow flex items-center justify-center p-4 py-12">
+        <div class="max-w-6xl w-full">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <!-- 标题区域 -->
+                <div class="p-6 md:p-8 border-b border-secondary/30">
+                    <h1 class="text-4xl font-bold text-center mb-2 text-primary">
+                        五子棋对战大厅
+                    </h1>
+                    <p class="text-center text-gray-600">与其他玩家对弈，提升您的棋艺水平</p>
+                </div>
+                
+                <div class="p-6 md:p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- 左侧：用户信息和操作区 -->
+                        <div class="space-y-6">
+                            <!-- 用户信息卡片 -->
+                            <div class="bg-white rounded-xl p-6 shadow-lg border border-secondary/50">
+                                <h2 class="text-2xl font-semibold mb-4 text-primary">用户信息</h2>
+                                <div id="user-info" class="space-y-3">
+                                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                                        <span class="text-gray-700">用户名:</span>
+                                        <span id="username" class="font-medium">未获取</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                                        <span class="text-gray-700">等级:</span>
+                                        <span id="user-level" class="font-medium">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                                        <span class="text-gray-700">胜率:</span>
+                                        <span id="win-rate" class="font-medium">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700">积分:</span>
+                                        <span id="score" class="font-medium">--</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex space-x-4">
+                                    <button id="refresh-user" class="btn-hover flex-1 bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                                        <i class="fa fa-refresh mr-2"></i>
+                                        刷新信息
+                                    </button>
+                                    <button id="start-match" class="btn-hover flex-1 bg-accent hover:bg-accent/90 text-white py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                                        <i class="fa fa-play mr-2"></i>
+                                        开始匹配
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 匹配状态 -->
+                            <div id="matching-status" class="bg-white rounded-xl p-6 shadow-lg border border-secondary/50 hidden">
+                                <h2 class="text-2xl font-semibold mb-4 text-primary">匹配状态</h2>
+                                <div class="flex items-center justify-center">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mb-3 mr-3"></div>
+                                    <span class="text-lg">正在寻找对手...</span>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <p class="text-gray-700">已等待: <span id="wait-time">0</span> 秒</p>
+                                </div>
+                                <button id="cancel-match" class="mt-4 w-full btn-hover bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg transition duration-300">
+                                    取消匹配
+                                </button>
+                            </div>
+                            
+                            <!-- 游戏统计 -->
+                            <div class="bg-white rounded-xl p-6 shadow-lg border border-secondary/50">
+                                <h2 class="text-2xl font-semibold mb-4 text-primary">游戏统计</h2>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-secondary/20 rounded-lg p-4 text-center">
+                                        <p class="text-3xl font-bold text-primary" id="total-games">0</p>
+                                        <p class="text-gray-700">总对局</p>
+                                    </div>
+                                    <div class="bg-secondary/20 rounded-lg p-4 text-center">
+                                        <p class="text-3xl font-bold text-primary" id="win-games">0</p>
+                                        <p class="text-gray-700">胜利局数</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：棋盘区域 -->
+                        <div class="flex flex-col items-center">
+                            <div class="bg-white rounded-xl p-6 shadow-lg w-full border border-secondary/50">
+                                <h2 class="text-2xl font-semibold mb-6 text-center text-primary">动态棋盘演示</h2>
+                                <div class="flex justify-center">
+                                    <div class="board board-texture" id="go-board"></div>
+                                </div>
+                                <div class="mt-6 text-center text-gray-700">
+                                    <p>一黑一白，轮流下棋，先将五颗棋子连成一线者为胜者</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 大厅状态 -->
+                            <div class="bg-white rounded-xl p-6 shadow-lg w-full mt-6 border border-secondary/50">
+                                <h2 class="text-2xl font-semibold mb-4 text-primary">大厅状态</h2>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="bg-secondary/20 rounded-lg p-4 text-center">
+                                        <p class="text-2xl font-bold text-primary" id="online-count">0</p>
+                                        <p class="text-gray-700">在线用户</p>
+                                    </div>
+                                    <div class="bg-secondary/20 rounded-lg p-4 text-center">
+                                        <p class="text-2xl font-bold text-primary" id="matching-count">0</p>
+                                        <p class="text-gray-700">匹配中</p>
+                                    </div>
+                                    <div class="bg-secondary/20 rounded-lg p-4 text-center">
+                                        <p class="text-2xl font-bold text-primary" id="playing-count">0</p>
+                                        <p class="text-gray-700">对战中</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚（与登录页保持一致） -->
+    <footer class="bg-primary text-white py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-amber-200 text-sm">
+                <p>© 2023 五子棋游戏 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // 页面载入动画（与登录页保持一致）
+            const mainContent = document.querySelector('main > div');
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(20px)';
+            mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            
+            setTimeout(() => {
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // 初始化棋盘
+            initBoard();
+            
+            // 加载用户信息
+            loadUserInfo();
+            
+            // 初始化大厅状态
+            initHallStatus();
+            
+            // 绑定刷新用户信息按钮
+            $('#refresh-user').on('click', function() {
+                loadUserInfo();
+            });
+            
+            // 绑定开始匹配按钮
+            $('#start-match').on('click', function() {
+                startMatch();
+            });
+            
+            // 绑定取消匹配按钮
+            $('#cancel-match').on('click', function() {
+                cancelMatch();
+            });
+            
+            // 棋盘动态效果 - 黑白交替出现
+            let pieceInterval = setInterval(addPiece, 1000);
+            let currentColor = 'black'; // 起始颜色
+            
+            // 初始化棋盘
+            function initBoard() {
+                // 初始添加一些棋子
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        addPiece();
+                    }, i * 200);
+                }
+            }
+            
+            // 添加棋子函数 - 确保棋子落在交叉线中心
+            function addPiece() {
+                const board = $('#go-board');
+                
+                // 随机选择一个交叉点 (0-14)
+                const xIndex = Math.floor(Math.random() * 15);
+                const yIndex = Math.floor(Math.random() * 15);
+                
+                // 使用百分比定位：相对14个间隔计算位置（更稳健，和背景网格对齐）
+                const xPercent = (xIndex / 14) * 100;
+                const yPercent = (yIndex / 14) * 100;
+                
+                // 创建棋子元素
+                const piece = $('<div class="piece chess-piece"></div>'); // 使用统一的chess-piece类
+                piece.css({
+                    left: `${xPercent}%`,
+                    top: `${yPercent}%`
+                });
+                
+                // 设置棋子颜色并交替
+                if (currentColor === 'black') {
+                    piece.addClass('black');
+                    currentColor = 'white';
+                } else {
+                    piece.addClass('white');
+                    currentColor = 'black';
+                }
+                
+                // 添加出现动画
+                piece.addClass('appear');
+                
+                // 添加到棋盘
+                board.append(piece);
+                
+                // 当棋子数量超过20个时，移除最早的一个（优化数量与登录页保持视觉平衡）
+                const pieces = $('.piece:not(.disappear)');
+                if (pieces.length > 15) {
+                    const oldestPiece = pieces.eq(0);
+                    
+                    // 添加消失动画
+                    oldestPiece.addClass('disappear');
+                    
+                    // 动画结束后移除元素
+                    setTimeout(() => {
+                        if (oldestPiece.parent().length) {
+                            oldestPiece.remove();
+                        }
+                    }, 1000);
+                }
+            }
+            
+            //这里来设置websocket连接
+            var ws_url = "ws://124.222.53.34:8080/hall";
+            var ws_hdl = null;  // 局变量，整个页面都能访问
+
+            // 加载用户信息函数（使用AJAX GET请求）
+            function loadUserInfo() {
+                // 发送请求前禁用按钮并显示加载状态
+                $('#refresh-user').prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin mr-2"></i>加载中...');
+                
+                // 发送GET请求到 .info 接口
+                //同域请求：自动携带Cookie
+                $.ajax({
+                  type: 'GET',
+                  url: '/info',
+                  success: function(response) {
+                    // 1. 用户名
+                    $('#username').text(response.username || '未知用户');
+                    
+                    // 2. 等级
+                    const score = parseInt(response.score) || 0; // 确保分数为数字类型，默认0
+                    let level = '青铜';
+                    if (score >= 3000) {
+                      level = '黄金';
+                    } else if (score >= 2000) {
+                      level = '白银';
+                    }
+                    $('#user-level').text(level);
+                    
+                    // 3. 胜率（根据后端total_count和win_count计算）
+                    const totalCount = response.total_count || 0; // 后端总对局数字段
+                    const winCount = response.win_count || 0;     // 后端胜利局数字段
+                    let winRate = '0%';
+                    if (totalCount > 0) {
+                      // 计算胜率并保留1位小数
+                      const rate = (winCount / totalCount) * 100;
+                      winRate = rate.toFixed(1) + '%';
+                    }
+                    $('#win-rate').text(winRate);
+                    
+                    // 4. 积分（直接映射后端score字段）
+                    $('#score').text(response.score || '0');
+                    
+                    // 5. 总对局（映射后端total_count字段）
+                    $('#total-games').text(totalCount);
+                    
+                    // 6. 胜利局数（映射后端win_count字段）
+                    $('#win-games').text(winCount);
+                    
+                    // 恢复按钮状态
+                    $('#refresh-user').prop('disabled', false).html('<i class="fa fa-refresh mr-2"></i>刷新信息');
+
+                    // 建立WebSocket连接
+                    // 先关闭可能存在的旧连接，避免重复连接
+                    if (ws_hdl && ws_hdl.readyState !== WebSocket.CLOSED) {
+                        ws_hdl.close(); // 关闭旧连接
+                    }
+                    
+                    ws_hdl = new WebSocket(ws_url);
+
+                    // 连接成功时触发
+                    ws_hdl.onopen = function() {
+                        console.log("WebSocket连接成功！");
+                    };
+
+                    // 收到服务器消息时触发
+                    ws_hdl.onmessage = function(event) {
+                        // 解析服务器返回的JSON数据
+                        console.log("收到服务器消息：", event.data);
+                        const data = JSON.parse(event.data);
+                        if(data.result==false) 
+                        {
+                            // 匹配失败
+                            console.log("匹配失败！请稍后重试...");
+                            return;
+                        }
+                        // 处理不同的消息类型
+                        if(data.optype=="match_start")
+                        {
+                            console.log("匹配已开始，请等待对手...");
+                        }
+                        else if(data.optype=="match_stop")
+                        {
+                            console.log("匹配已结束，您可以重新匹配...");
+                        }
+                        else if(data.optype=="match_success")
+                        {
+                            console.log("匹配成功！");
+                            // 跳转到游戏房间页面
+                            matchSuccess();
+                        }
+                        else if(data.optype=="room_ready")
+                        {
+                            alert(data);
+                        }
+                    };
+
+                    // 连接出错时触发
+                    ws_hdl.onerror = function(error) {
+                        console.error("WebSocket错误：", error.data);
+                        alert("连接出错了！");
+                    };
+
+                    // 连接关闭时触发
+                    ws_hdl.onclose = function(event) {
+                        console.log("连接关闭，原因：" + event.data);
+                    };
+                  },
+                  error: function(xhr, status, error) {
+                    // 请求失败时处理
+                    console.error('获取用户信息失败：', status, error);
+                    alert('获取信息失败/登录信息已过期，请稍后重试（' + error + '）');
+                    //跳转到登录页
+                    location.replace('/login.html');
+                    
+                    // 无论成功失败都恢复按钮状态
+                    $('#refresh-user').prop('disabled', false).html('<i class="fa fa-refresh mr-2"></i>刷新信息');
+                  }
+              });
+            }
+            
+            // 初始化大厅状态
+            function initHallStatus() {
+                // 初始值
+                let online = 124;
+                let matching = 18;
+                let playing = 46;
+                
+                // 更新显示
+                function updateStatus() {
+                    $('#online-count').text(online);
+                    $('#matching-count').text(matching);
+                    $('#playing-count').text(playing);
+                }
+                
+                updateStatus();
+                
+                // 定期随机更新数据
+                setInterval(() => {
+                    online += Math.floor(Math.random() * 5) - 2;
+                    matching += Math.floor(Math.random() * 3) - 1;
+                    playing += Math.floor(Math.random() * 3) - 1;
+                    
+                    online = Math.max(online, 0);
+                    matching = Math.max(matching, 0);
+                    playing = Math.max(playing, 0);
+                    
+                    updateStatus();
+                }, 5000);
+            }
+            
+            // 开始匹配函数
+            function startMatch() {
+                // 前端交互：禁用按钮、显示“匹配中”状态
+                $('#start-match').prop('disabled', true).html('<i class="fa fa-circle-o-notch fa-spin mr-2"></i>匹配中...');
+                $('#matching-status').removeClass('hidden');
+                
+                // 发送“开始匹配”的WebSocket消息，前面ws_hdl已经建立连接
+                const req_json = { optype: "match_start" };
+                ws_hdl.send(JSON.stringify(req_json));
+                
+                // 模拟匹配计时（保留前端交互逻辑）
+                let waitTime = 0;
+                const timer = setInterval(() => {
+                    waitTime++;
+                    $('#wait-time').text(waitTime);
+                }, 1000);
+                
+                // 保存计时器ID，用于取消匹配时清除
+                $('#matching-status').data('timer', timer);
+            }
+
+            // 取消匹配函数
+            function cancelMatch() {
+                // 清除匹配计时
+                const timer = $('#matching-status').data('timer');
+                if (timer) {
+                    clearInterval(timer);
+                }
+                
+                // 前端交互：隐藏状态、恢复按钮可点击
+                $('#matching-status').addClass('hidden');
+                $('#start-match').prop('disabled', false).html('<i class="fa fa-play mr-2"></i>开始匹配');
+                
+                // 发送“停止匹配”的WebSocket消息
+                const req_json = { optype: "match_stop" };
+                ws_hdl.send(JSON.stringify(req_json));
+            }
+
+            // 匹配成功函数（前端交互逻辑，无需修改）
+            function matchSuccess() {
+                $('#matching-status').html(`
+                    <div class="bg-[#E8D7B8] rounded-xl p-6 shadow-md border-2 border-[#8B5A2B] relative">
+                        <!-- 模拟棋盘纹理的细微装饰 -->
+                        <div class="absolute top-0 left-0 w-full h-full bg-[#D2B48C] opacity-20 rounded-xl -z-10"></div>
+                        
+                        <h2 class="text-3xl font-medium mb-5 text-[#5D3A1F] font-['Microsoft YaHei','微软雅黑',sans-serif] tracking-wider text-center">匹配成功！</h2>
+                        <div class="text-center py-4">
+                            <p class="text-xl mb-8 text-[#4A2F16] font-['Microsoft YaHei','微软雅黑',sans-serif] leading-relaxed tracking-wider">
+                                已经匹配到与你旗鼓相当的对手
+                            </p>
+                            <button id="enter-game" class="btn-hover bg-[#8B5A2B] hover:bg-[#734820] text-[#F9F4E8] py-3 px-8 rounded-lg transition duration-300 border border-[#A67C52] shadow-sm hover:shadow-md font-['Microsoft YaHei','微软雅黑',sans-serif] text-lg font-medium tracking-wider">
+                                进入对局
+                            </button>
+                        </div>
+                    </div>
+                `);
+                // 绑定进入对局按钮 - 跳转至game.html页面
+                $('#enter-game').on('click', function() {
+                    // 跳转到game.html页面（可根据实际路径调整）
+                    window.location.href = 'game.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

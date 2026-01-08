@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 页面未找到</title>
+  
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5A2B',    // 木色主色调
+            secondary: '#D2B48C',  // 浅木色
+            accent: '#CD853F',     // 突出色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .board-texture {
+        background-image: url('https://picsum.photos/id/129/1000/1000');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+      }
+      .piece-tilt {
+        transform: rotate(-15deg) scale(1.1);
+        animation: tilt 3s ease-in-out infinite alternate;
+      }
+      @keyframes tilt {
+        0% { transform: rotate(-15deg) scale(1.1); }
+        100% { transform: rotate(15deg) scale(1.1); }
+      }
+      .floating {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+  <!-- 头部 -->
+  <header class="mb-8 text-center">
+    <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-primary mb-2 tracking-wide">五子棋</h1>
+    <p class="text-gray-600 text-lg">落子连五，智者胜</p>
+  </header>
+  
+  <!-- 主要内容 -->
+  <main class="max-w-4xl w-full bg-white rounded-xl shadow-xl overflow-hidden transform transition-all hover:shadow-2xl">
+    <!-- 棋盘风格的404展示区 -->
+    <div class="relative board-texture bg-secondary/90 p-8 md:p-12 border-b-4 border-primary">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <!-- 左侧：404错误信息 -->
+        <div class="text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white text-2xl font-bold shadow-lg">4</div>
+            <div class="w-12 h-12 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-primary text-2xl font-bold shadow-lg">0</div>
+            <div class="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white text-2xl font-bold shadow-lg">4</div>
+          </div>
+          
+          <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-3">哎呀，页面找不到了</h2>
+          <p class="text-gray-800 max-w-md mb-6 text-lg">
+            您访问的页面好像从棋盘上消失了，就像一颗被吃掉的棋子
+          </p>
+          
+          <a href="./index.html" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+            <i class="fa fa-home"></i>
+            <span>返回首页</span>
+          </a>
+        </div>
+        
+        <!-- 右侧：棋盘视觉元素 -->
+        <div class="relative w-48 h-48 md:w-64 md:h-64">
+          <!-- 小型棋盘背景 -->
+          <div class="absolute inset-0 rounded-md border-4 border-primary board-texture bg-secondary/90 shadow-lg">
+            <div class="w-full h-full" style="background-image: 
+              linear-gradient(to right, rgba(0,0,0,0.8) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(0,0,0,0.8) 1px, transparent 1px);
+              background-size: 25% 25%;">
+            </div>
+          </div>
+          
+          <!-- 错位的棋子 -->
+          <div class="absolute top-1/4 left-1/4 w-10 h-10 rounded-full bg-black shadow-md piece-tilt z-10"></div>
+          <div class="absolute top-1/2 left-1/3 w-10 h-10 rounded-full bg-white border border-gray-300 shadow-md floating z-10"></div>
+          <div class="absolute bottom-1/4 right-1/4 w-10 h-10 rounded-full bg-black shadow-md floating z-10" style="animation-delay: 1s;"></div>
+          <div class="absolute top-1/3 right-1/3 w-10 h-10 rounded-full bg-white border border-gray-300 shadow-md floating z-10" style="animation-delay: 2s;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 辅助信息区 -->
+    <div class="p-6 md:p-8">
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex-1">
+          <h3 class="font-semibold text-primary text-lg mb-3 flex items-center gap-2">
+            <i class="fa fa-search text-accent"></i>可能的原因
+          </h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>页面地址可能被移动或删除了</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>输入的网址可能有误，请检查拼写</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>该页面可能只在特定条件下可见</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="flex-1">
+          <h3 class="font-semibold text-primary text-lg mb-3 flex items-center gap-2">
+            <i class="fa fa-compass text-accent"></i>您可以
+          </h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>返回首页继续浏览</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>使用导航菜单查找需要的内容</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa fa-circle text-xs mt-1.5 text-accent"></i>
+              <span>刷新页面重试</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- 页脚 -->
+  <footer class="mt-10 text-center text-gray-500 text-sm">
+    <p>© 2023 五子棋 | 体验经典对弈的乐趣</p>
+  </footer>
+
+  <script>
+    // 添加页面载入动画
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainContent = document.querySelector('main');
+      mainContent.style.opacity = '0';
+      mainContent.style.transform = 'translateY(20px)';
+      mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        mainContent.style.transform = 'translateY(0)';
+      }, 100);
+    });
+  </script>
+</body>
+</html>

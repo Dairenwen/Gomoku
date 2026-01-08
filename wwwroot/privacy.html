@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>隐私政策 - 五子棋</title>
+  
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5A2B',    // 木色主色调
+            secondary: '#D2B48C',  // 浅木色
+            accent: '#CD853F',     // 突出色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .board-texture {
+        background-image: url('https://picsum.photos/id/129/1000/1000');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+      }
+      .input-focus {
+        @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+      }
+      .btn-hover {
+        transition: all 0.3s ease;
+      }
+      .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans flex flex-col">
+  <!-- 导航栏 -->
+  <nav class="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
+              <i class="fa fa-gamepad text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-primary">五子棋</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
+          <a href="hall.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">游戏大厅</a>
+          <a href="login.html" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">登录</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="flex-grow p-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
+        <!-- 返回链接 -->
+        <div class="mb-8">
+          <a href="register.html" class="inline-flex items-center text-primary hover:text-primary/80 transition-colors">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回注册</span>
+          </a>
+        </div>
+        
+        <!-- 政策标题 -->
+        <div class="text-center mb-10">
+          <h1 class="text-3xl md:text-4xl font-bold text-primary mb-4">隐私政策</h1>
+          <p class="text-gray-500">版本号：v1.0.0 更新日期：2023年10月1日</p>
+        </div>
+        
+        <!-- 政策内容 -->
+        <div class="space-y-8 text-gray-700 leading-relaxed">
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-shield mr-2"></i>一、总则
+            </h2>
+            <p>本隐私政策旨在说明五子棋游戏平台（以下简称"本平台"）如何收集、使用、存储和保护您的个人信息。我们尊重并保护所有使用本平台服务用户的个人隐私权，承诺按照本政策处理您的个人信息。</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-database mr-2"></i>二、信息收集
+            </h2>
+            <p class="mb-3">为提供服务，我们可能收集以下信息：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li><strong>注册信息</strong>：包括您提供的用户名、邮箱地址等用于账号注册的信息。</li>
+              <li><strong>使用信息</strong>：包括游戏记录、胜负数据、登录日志、设备信息（如设备型号、操作系统）等。</li>
+              <li><strong>位置信息</strong>：如您同意，我们可能收集您的大致地理位置信息（仅用于匹配附近玩家）。</li>
+              <li><strong>第三方信息</strong>：如您通过第三方账号（QQ、微信）登录，我们将获取您授权的相关信息。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-cog mr-2"></i>三、信息使用
+            </h2>
+            <p class="mb-3">我们收集的信息将用于以下目的：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>提供和维护本平台服务，确保服务正常运行。</li>
+              <li>匹配游戏对手，优化游戏体验。</li>
+              <li>统计和分析用户行为，改进服务质量。</li>
+              <li>向您推送重要通知（如账号安全提醒）。</li>
+              <li>防范和处理欺诈、违规行为，保障平台安全。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-share-alt mr-2"></i>四、信息共享
+            </h2>
+            <p class="mb-3">我们承诺不会向第三方出售您的个人信息，以下情况除外：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>获得您明确的书面同意后。</li>
+              <li>为遵守法律法规、法院判决或政府要求。</li>
+              <li>为保护本平台或用户的合法权益。</li>
+              <li>与信任的合作伙伴共享（仅限提供服务所需，且受保密协议约束）。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-lock mr-2"></i>五、信息保护
+            </h2>
+            <p class="mb-3">我们采取多种安全措施保护您的信息：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>对敏感信息进行加密存储和传输。</li>
+              <li>限制内部人员对用户信息的访问权限。</li>
+              <li>定期进行安全评估和漏洞检测。</li>
+              <li>采用安全的服务器和网络环境。</li>
+            </ul>
+            <p class="mt-3">请注意，互联网传输并非绝对安全，我们无法保证信息传输的绝对安全性。</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-user-circle mr-2"></i>六、用户权利
+            </h2>
+            <p class="mb-3">您对自己的个人信息享有以下权利：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>访问权：查询和查看您的个人信息。</li>
+              <li>更正权：修改不准确的个人信息。</li>
+              <li>删除权：要求删除您的个人信息（法律法规要求保留的除外）。</li>
+              <li>撤回同意权：可撤回对信息收集和使用的同意。</li>
+              <li>注销权：申请注销账号，我们将按规定删除相关信息。</li>
+            </ul>
+            <p class="mt-3">如需行使上述权利，请联系客服：support@wuzhiqi.com</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-clock-o mr-2"></i>七、信息存储期限
+            </h2>
+            <p>我们将在实现本政策所述目的所需的期限内保留您的个人信息，具体如下：</p>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>账号信息：在您的账号存续期间保留。</li>
+              <li>游戏记录：保留12个月。</li>
+              <li>登录日志：保留6个月。</li>
+              <li>法律法规另有规定的，按规定执行。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-question-circle mr-2"></i>八、政策修改
+            </h2>
+            <p>我们可能会不时更新本隐私政策，更新后的政策将在平台公告后生效。建议您定期查阅本政策，了解信息保护的最新情况。</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-primary text-white py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center text-amber-200 text-sm">
+        <p>© 2023 五子棋游戏 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 页面载入动画
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainContent = document.querySelector('main > div');
+      mainContent.style.opacity = '0';
+      mainContent.style.transform = 'translateY(20px)';
+      mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        mainContent.style.transform = 'translateY(0)';
+      }, 100);
+    });
+  </script>
+</body>
+</html>

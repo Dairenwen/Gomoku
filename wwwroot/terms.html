@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户协议 - 五子棋</title>
+  
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B5A2B',    // 木色主色调
+            secondary: '#D2B48C',  // 浅木色
+            accent: '#CD853F',     // 突出色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .board-texture {
+        background-image: url('https://picsum.photos/id/129/1000/1000');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+      }
+      .input-focus {
+        @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+      }
+      .btn-hover {
+        transition: all 0.3s ease;
+      }
+      .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans flex flex-col">
+  <!-- 导航栏 -->
+  <nav class="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
+              <i class="fa fa-gamepad text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-primary">五子棋</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">首页</a>
+          <a href="hall.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">游戏大厅</a>
+          <a href="login.html" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">登录</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="flex-grow p-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
+        <!-- 返回链接 -->
+        <div class="mb-8">
+          <a href="register.html" class="inline-flex items-center text-primary hover:text-primary/80 transition-colors">
+            <i class="fa fa-arrow-left mr-2"></i>
+            <span>返回注册</span>
+          </a>
+        </div>
+        
+        <!-- 协议标题 -->
+        <div class="text-center mb-10">
+          <h1 class="text-3xl md:text-4xl font-bold text-primary mb-4">用户协议</h1>
+          <p class="text-gray-500">版本号：v1.0.0 更新日期：2023年10月1日</p>
+        </div>
+        
+        <!-- 协议内容 -->
+        <div class="space-y-8 text-gray-700 leading-relaxed">
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-info-circle mr-2"></i>一、服务条款
+            </h2>
+            <p class="mb-3">欢迎使用五子棋游戏平台（以下简称"本平台"）。本协议是您与本平台之间关于使用本平台服务所订立的协议。请您在注册或使用本平台服务前仔细阅读本协议，一旦您注册或使用本平台服务，即视为您已接受本协议全部内容。</p>
+            <p>本平台保留随时修改或更新本协议的权利，修改后的协议将在平台公告后生效。您继续使用本平台服务即视为接受修改后的协议。</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-user-circle mr-2"></i>二、用户账号
+            </h2>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>您需年满13周岁方可注册和使用本平台服务。</li>
+              <li>您应提供真实、准确的注册信息，并及时更新个人资料。</li>
+              <li>您应对账号及密码的安全性负责，不得将账号转借或分享给他人使用。</li>
+              <li>如发现账号异常使用，请立即联系平台客服。</li>
+              <li>连续12个月未登录的账号，本平台有权予以注销。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-gamepad mr-2"></i>三、使用规则
+            </h2>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>不得利用本平台进行任何违法违规活动。</li>
+              <li>不得发布或传播任何侮辱、诽谤、淫秽、暴力等不良信息。</li>
+              <li>不得使用作弊软件、外挂或其他不正当手段影响游戏公平性。</li>
+              <li>不得侵犯其他用户的合法权益或干扰平台正常运行。</li>
+              <li>应尊重其他玩家，文明交流，遵守体育精神和道德规范。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-copyright mr-2"></i>四、知识产权
+            </h2>
+            <p class="mb-3">本平台所有内容（包括但不限于软件、文字、图片、音频、视频、界面设计、版面布局等）的知识产权归本平台或相关权利人所有。</p>
+            <p>未经本平台书面许可，您不得擅自使用、复制、修改、传播、展示本平台的任何内容，不得侵犯本平台的知识产权。</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-shield mr-2"></i>五、免责声明
+            </h2>
+            <ul class="list-disc pl-6 space-y-2">
+              <li>本平台尽力保障服务的稳定性，但不对服务的不间断性和无差错性作出承诺。</li>
+              <li>因不可抗力、网络故障等原因导致服务中断或数据丢失的，本平台不承担责任。</li>
+              <li>用户因使用本平台服务而产生的任何间接损失，本平台不承担责任。</li>
+              <li>用户之间因使用本平台服务产生的纠纷，由用户自行解决，本平台可提供必要协助。</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-legal mr-2"></i>六、服务终止
+            </h2>
+            <p class="mb-3">如您违反本协议或相关法律法规，本平台有权随时暂停或终止您的账号及服务，且不承担任何责任。</p>
+            <p>您可随时申请注销账号，注销后您将无法使用本平台服务，相关数据将按照隐私政策进行处理。</p>
+          </section>
+          
+          <section>
+            <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+              <i class="fa fa-phone mr-2"></i>七、联系我们
+            </h2>
+            <p>如您对本协议有任何疑问，请通过以下方式联系我们：</p>
+            <p class="mt-2"><i class="fa fa-envelope text-primary mr-2"></i>客服邮箱：support@wuzhiqi.com</p>
+            <p><i class="fa fa-clock-o text-primary mr-2"></i>工作时间：周一至周五 9:00-18:00</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-primary text-white py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center text-amber-200 text-sm">
+        <p>© 2023 五子棋游戏 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 页面载入动画
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainContent = document.querySelector('main > div');
+      mainContent.style.opacity = '0';
+      mainContent.style.transform = 'translateY(20px)';
+      mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        mainContent.style.transform = 'translateY(0)';
+      }, 100);
+    });
+  </script>
+</body>
+</html>
